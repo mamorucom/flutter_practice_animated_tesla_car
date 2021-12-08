@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:practice_animated_tesla_car/constanins.dart';
 import 'package:practice_animated_tesla_car/home_controller.dart';
 import 'package:practice_animated_tesla_car/screens/components/door_lock.dart';
+import 'package:practice_animated_tesla_car/screens/components/tesla_bottom_navigationbar.dart';
 // import 'package:practice_animated_tesla_car/models/TyrePsi.dart';
 
 // import 'components/battery_status.dart';
@@ -48,6 +49,31 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       animation: _controller,
       builder: (context, _) {
         return Scaffold(
+          bottomNavigationBar: TeslaBottomNavigationBar(
+            onTap: (index) {
+              if (index == 1)
+                _batteryAnimationController.forward();
+              else if (_controller.selectedBottomTab == 1 && index != 1)
+                _batteryAnimationController.reverse(from: 0.7);
+
+              if (index == 2)
+                _tempAnimationController.forward();
+              else if (_controller.selectedBottomTab == 2 && index != 2)
+                _tempAnimationController.reverse(from: 0.4);
+
+              if (index == 3)
+                _tyreAnimationController.forward();
+              else if (_controller.selectedBottomTab == 3 && index != 3)
+                _tyreAnimationController.reverse();
+
+              _controller.showTyreController(index);
+              _controller.tyreStatusController(index);
+              // Make sure you call it before [onBottomNavigationTabChange]
+              // タブの切り替え
+              _controller.onBottomNavigationTabChange(index);
+            },
+            selectedTab: _controller.selectedBottomTab,
+          ),
           body: SafeArea(
             child: LayoutBuilder(builder: (context, constraints) {
               return Stack(
