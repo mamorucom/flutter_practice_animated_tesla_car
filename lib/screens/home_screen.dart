@@ -42,28 +42,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late List<Animation<double>> _tyreAnimations;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(builder: (context, constraints) {
-          return Stack(
-            alignment: Alignment.center,
-            children: [
-              Padding(
-                padding:
-                    EdgeInsets.symmetric(vertical: constraints.maxHeight * 0.1),
-                child: SvgPicture.asset(
-                  "assets/icons/Car.svg",
-                  width: double.infinity,
-                ),
-              ),
-              Positioned(
-                right: constraints.maxWidth * 0.05,
-                child: SvgPicture.asset("assets/icons/door_lock.svg"),
-              ),
-            ],
-          );
-        }),
-      ),
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, snapshot) {
+        return Scaffold(
+          body: SafeArea(
+            child: LayoutBuilder(builder: (context, constraints) {
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: constraints.maxHeight * 0.1),
+                    child: SvgPicture.asset(
+                      "assets/icons/Car.svg",
+                      width: double.infinity,
+                    ),
+                  ),
+                  Positioned(
+                    right: constraints.maxWidth * 0.05,
+                    child: GestureDetector(
+                      onTap: _controller.updateRightDoorLock,
+                      child: _controller.isRightDoorLock
+                          ? SvgPicture.asset("assets/icons/door_unlock.svg")
+                          : SvgPicture.asset("assets/icons/door_lock.svg"),
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ),
+        );
+      },
     );
   }
 }
