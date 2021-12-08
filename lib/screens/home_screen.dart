@@ -40,11 +40,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late Animation<double> _animationTyre4Psi;
 
   late List<Animation<double>> _tyreAnimations;
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
-      builder: (context, snapshot) {
+      builder: (context, _) {
         return Scaffold(
           body: SafeArea(
             child: LayoutBuilder(builder: (context, constraints) {
@@ -61,11 +62,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                   Positioned(
                     right: constraints.maxWidth * 0.05,
-                    child: GestureDetector(
-                      onTap: _controller.updateRightDoorLock,
-                      child: _controller.isRightDoorLock
-                          ? SvgPicture.asset("assets/icons/door_unlock.svg")
-                          : SvgPicture.asset("assets/icons/door_lock.svg"),
+                    child: DoorLock(
+                      isLock: _controller.isRightDoorLock,
+                      press: _controller.updateRightDoorLock,
                     ),
                   ),
                 ],
@@ -74,6 +73,51 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         );
       },
+    );
+  }
+}
+
+///
+/// ドアロックWidget
+///
+class DoorLock extends StatelessWidget {
+  const DoorLock({
+    Key? key,
+    required this.isLock,
+    required this.press,
+  }) : super(key: key);
+
+  final isLock;
+  final VoidCallback press;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: press,
+      // アニメーション切り替えWidget
+      child: AnimatedSwitcher(
+        duration: defaultDuration,
+        // Curves class - ちょっとジャンプするようなエフェクトを採用
+        // https://api.flutter.dev/flutter/animation/Curves-class.html
+        switchInCurve: Curves.easeInOutBack,
+        // トランジション
+        transitionBuilder: (child, animation) => ScaleTransition(
+          scale: animation,
+          child: child,
+        ),
+
+        /// ValueKeyをつけないとFlutterは同じWidgetと判断してしまい、
+        /// アニメーションが発動しない
+        child: isLock
+            ? SvgPicture.asset(
+                "assets/icons/door_lock.svg",
+                key: ValueKey("lock"),
+              )
+            : SvgPicture.asset(
+                "assets/icons/door_unlock.svg",
+                key: ValueKey("unlock"),
+              ),
+      ),
     );
   }
 }
