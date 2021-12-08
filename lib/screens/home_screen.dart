@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:practice_animated_tesla_car/constanins.dart';
 import 'package:practice_animated_tesla_car/home_controller.dart';
+import 'package:practice_animated_tesla_car/screens/components/door_lock.dart';
 // import 'package:practice_animated_tesla_car/models/TyrePsi.dart';
 
 // import 'components/battery_status.dart';
@@ -60,11 +61,33 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       width: double.infinity,
                     ),
                   ),
+                  // Door Lock
                   Positioned(
                     right: constraints.maxWidth * 0.05,
                     child: DoorLock(
                       isLock: _controller.isRightDoorLock,
                       press: _controller.updateRightDoorLock,
+                    ),
+                  ),
+                  Positioned(
+                    left: constraints.maxWidth * 0.05,
+                    child: DoorLock(
+                      isLock: _controller.isLeftDoorLock,
+                      press: _controller.updateLeftDoorLock,
+                    ),
+                  ),
+                  Positioned(
+                    top: constraints.maxWidth * 0.13,
+                    child: DoorLock(
+                      isLock: _controller.isBonnetLock,
+                      press: _controller.updateBonnetDoorLock,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: constraints.maxWidth * 0.17,
+                    child: DoorLock(
+                      isLock: _controller.isTrunkLock,
+                      press: _controller.updateTrunkDoorLock,
                     ),
                   ),
                 ],
@@ -73,51 +96,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         );
       },
-    );
-  }
-}
-
-///
-/// ドアロックWidget
-///
-class DoorLock extends StatelessWidget {
-  const DoorLock({
-    Key? key,
-    required this.isLock,
-    required this.press,
-  }) : super(key: key);
-
-  final isLock;
-  final VoidCallback press;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: press,
-      // アニメーション切り替えWidget
-      child: AnimatedSwitcher(
-        duration: defaultDuration,
-        // Curves class - ちょっとジャンプするようなエフェクトを採用
-        // https://api.flutter.dev/flutter/animation/Curves-class.html
-        switchInCurve: Curves.easeInOutBack,
-        // トランジション
-        transitionBuilder: (child, animation) => ScaleTransition(
-          scale: animation,
-          child: child,
-        ),
-
-        /// ValueKeyをつけないとFlutterは同じWidgetと判断してしまい、
-        /// アニメーションが発動しない
-        child: isLock
-            ? SvgPicture.asset(
-                "assets/icons/door_lock.svg",
-                key: ValueKey("lock"),
-              )
-            : SvgPicture.asset(
-                "assets/icons/door_unlock.svg",
-                key: ValueKey("unlock"),
-              ),
-      ),
     );
   }
 }
