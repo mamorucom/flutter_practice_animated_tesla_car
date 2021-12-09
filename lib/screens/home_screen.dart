@@ -119,12 +119,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               return Stack(
                 alignment: Alignment.center,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: constraints.maxHeight * 0.1),
-                    child: SvgPicture.asset(
-                      "assets/icons/Car.svg",
-                      width: double.infinity,
+                  SizedBox(
+                    height: constraints.maxHeight,
+                    width: constraints.maxWidth,
+                  ),
+
+                  Positioned(
+                    left: constraints.maxWidth / 2,
+                    height: constraints.maxHeight,
+                    width: constraints.maxWidth,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: constraints.maxHeight * 0.1),
+                      child: SvgPicture.asset(
+                        "assets/icons/Car.svg",
+                        width: double.infinity,
+                      ),
                     ),
                   ),
                   // Door Lock
