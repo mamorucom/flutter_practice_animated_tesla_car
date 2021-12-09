@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:practice_animated_tesla_car/constanins.dart';
 import 'package:practice_animated_tesla_car/home_controller.dart';
+import 'package:practice_animated_tesla_car/screens/components/battery_status.dart';
 import 'package:practice_animated_tesla_car/screens/components/door_lock.dart';
 import 'package:practice_animated_tesla_car/screens/components/tesla_bottom_navigationbar.dart';
 // import 'package:practice_animated_tesla_car/models/TyrePsi.dart';
@@ -43,18 +44,46 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   late List<Animation<double>> _tyreAnimations;
 
+  void setupBatteryAnimation() {
+    _batteryAnimationController = AnimationController(
+      vsync: this,
+      duration: Duration(
+        milliseconds: 600,
+      ),
+    );
+    // this animation start at 0 and end on half
+    // means after 300 milliseconds [total duration is 600]
+    _animationBattery = CurvedAnimation(
+      parent: _batteryAnimationController,
+      curve: Interval(0, 0.5),
+    );
+  }
+
+  @override
+  void initState() {
+    setupBatteryAnimation();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _batteryAnimationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _controller,
+      animation: Listenable.merge([_controller, _batteryAnimationController]),
       builder: (context, _) {
+        print(_animationBattery.value);
         return Scaffold(
           bottomNavigationBar: TeslaBottomNavigationBar(
             onTap: (index) {
-              // if (index == 1)
-              //   _batteryAnimationController.forward();
-              // else if (_controller.selectedBottomTab == 1 && index != 1)
-              //   _batteryAnimationController.reverse(from: 0.7);
+              if (index == 1)
+                _batteryAnimationController.forward();
+              else if (_controller.selectedBottomTab == 1 && index != 1)
+                _batteryAnimationController.reverse(from: 0.7);
 
               // if (index == 2)
               //   _tempAnimationController.forward();
@@ -143,6 +172,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         press: _controller.updateTrunkDoorLock,
                       ),
                     ),
+                  ),
+                  // Battery
+                  SvgPicture.asset("assets/icons/Battery.svg",
+                      width: constraints.maxWidth * 0.4),
+                  BatteryStatus(
+                    constraints: constraints,
                   ),
                 ],
               );
