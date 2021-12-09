@@ -47,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void setupBatteryAnimation() {
     _batteryAnimationController = AnimationController(
       vsync: this,
+      // トータルアニメーション時間
       duration: Duration(
         milliseconds: 600,
       ),
@@ -86,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       animation: Listenable.merge([_controller, _batteryAnimationController]),
       builder: (context, _) {
         print(_animationBattery.value);
+        // print(_animationBatteryStatus.value);
         return Scaffold(
           bottomNavigationBar: TeslaBottomNavigationBar(
             onTap: (index) {
