@@ -51,11 +51,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         milliseconds: 600,
       ),
     );
+
     // this animation start at 0 and end on half
-    // means after 300 milliseconds [total duration is 600]
+    // means after 300 milliseconds
     _animationBattery = CurvedAnimation(
       parent: _batteryAnimationController,
+      // 300msかけて終了
       curve: Interval(0, 0.5),
+    );
+
+    _animationBatteryStatus = CurvedAnimation(
+      parent: _batteryAnimationController,
+      // _animationBatteryのアニメーション終了から60ms後に開始
+      // so 360～600ms
+      curve: Interval(0.6, 1),
     );
   }
 
@@ -176,8 +185,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   // Battery
                   SvgPicture.asset("assets/icons/Battery.svg",
                       width: constraints.maxWidth * 0.4),
-                  BatteryStatus(
-                    constraints: constraints,
+                  Positioned(
+                    top: 50 * (1 - _animationBatteryStatus.value),
+                    height: constraints.maxHeight,
+                    width: constraints.maxWidth,
+                    child: Opacity(
+                      opacity: _animationBatteryStatus.value,
+                      child: BatteryStatus(
+                        constraints: constraints,
+                      ),
+                    ),
                   ),
                 ],
               );
