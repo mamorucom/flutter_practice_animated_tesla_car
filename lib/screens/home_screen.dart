@@ -93,30 +93,55 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     right: _controller.selectedBottomTab == 0
                         ? constraints.maxWidth * 0.05
                         : constraints.maxWidth / 2,
-                    child: DoorLock(
-                      isLock: _controller.isRightDoorLock,
-                      press: _controller.updateRightDoorLock,
+                    child: AnimatedOpacity(
+                      duration: defaultDuration,
+                      opacity: _controller.selectedBottomTab == 0 ? 1 : 0,
+                      child: DoorLock(
+                        isLock: _controller.isRightDoorLock,
+                        press: _controller.updateRightDoorLock,
+                      ),
                     ),
                   ),
-                  Positioned(
-                    left: constraints.maxWidth * 0.05,
-                    child: DoorLock(
-                      isLock: _controller.isLeftDoorLock,
-                      press: _controller.updateLeftDoorLock,
+                  AnimatedPositioned(
+                    duration: defaultDuration,
+                    left: _controller.selectedBottomTab == 0
+                        ? constraints.maxWidth * 0.05
+                        : constraints.maxWidth / 2,
+                    child: AnimatedOpacity(
+                      duration: defaultDuration,
+                      opacity: _controller.selectedBottomTab == 0 ? 1 : 0,
+                      child: DoorLock(
+                        isLock: _controller.isLeftDoorLock,
+                        press: _controller.updateLeftDoorLock,
+                      ),
                     ),
                   ),
-                  Positioned(
-                    top: constraints.maxWidth * 0.13,
-                    child: DoorLock(
-                      isLock: _controller.isBonnetLock,
-                      press: _controller.updateBonnetDoorLock,
+                  AnimatedPositioned(
+                    duration: defaultDuration,
+                    top: _controller.selectedBottomTab == 0
+                        ? constraints.maxWidth * 0.13
+                        : constraints.maxWidth / 2,
+                    child: AnimatedOpacity(
+                      duration: defaultDuration,
+                      opacity: _controller.selectedBottomTab == 0 ? 1 : 0,
+                      child: DoorLock(
+                        isLock: _controller.isBonnetLock,
+                        press: _controller.updateBonnetDoorLock,
+                      ),
                     ),
                   ),
-                  Positioned(
-                    bottom: constraints.maxWidth * 0.17,
-                    child: DoorLock(
-                      isLock: _controller.isTrunkLock,
-                      press: _controller.updateTrunkDoorLock,
+                  AnimatedPositioned(
+                    duration: defaultDuration,
+                    bottom: _controller.selectedBottomTab == 0
+                        ? constraints.maxWidth * 0.17
+                        : constraints.maxWidth / 2,
+                    child: AnimatedOpacity(
+                      duration: defaultDuration,
+                      opacity: _controller.selectedBottomTab == 0 ? 1 : 0,
+                      child: DoorLock(
+                        isLock: _controller.isTrunkLock,
+                        press: _controller.updateTrunkDoorLock,
+                      ),
                     ),
                   ),
                 ],
