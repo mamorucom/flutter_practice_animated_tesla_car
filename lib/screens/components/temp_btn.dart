@@ -9,11 +9,13 @@ class TempBtn extends StatelessWidget {
     required this.title,
     this.isActive = false,
     required this.press,
+    this.activeColor = primaryColor,
   }) : super(key: key);
 
   final String svgSrc, title;
   final bool isActive;
   final VoidCallback press;
+  final Color activeColor;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class TempBtn extends StatelessWidget {
             width: isActive ? 76 : 50,
             child: SvgPicture.asset(
               svgSrc,
-              color: isActive ? primaryColor : Colors.white38,
+              color: isActive ? activeColor : Colors.white38,
             ),
           ),
           const SizedBox(
@@ -38,16 +40,11 @@ class TempBtn extends StatelessWidget {
             duration: Duration(milliseconds: 200),
             style: TextStyle(
               fontSize: 16,
-              color: isActive ? primaryColor : Colors.white38,
+              color: isActive ? activeColor : Colors.white38,
               fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
             ),
             child: Text(
               title.toUpperCase(),
-              style: TextStyle(
-                fontSize: 16,
-                color: isActive ? primaryColor : Colors.white38,
-                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-              ),
             ),
           ),
         ],
