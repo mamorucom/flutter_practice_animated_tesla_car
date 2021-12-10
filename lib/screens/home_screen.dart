@@ -5,6 +5,7 @@ import 'package:practice_animated_tesla_car/constanins.dart';
 import 'package:practice_animated_tesla_car/home_controller.dart';
 import 'package:practice_animated_tesla_car/screens/components/battery_status.dart';
 import 'package:practice_animated_tesla_car/screens/components/door_lock.dart';
+import 'package:practice_animated_tesla_car/screens/components/temp_btn.dart';
 import 'package:practice_animated_tesla_car/screens/components/tesla_bottom_navigationbar.dart';
 // import 'package:practice_animated_tesla_car/models/TyrePsi.dart';
 
@@ -237,6 +238,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         constraints: constraints,
                       ),
                     ),
+                  ),
+                  // Temp
+                  TempBtn(
+                    isActive: _controller.isCoolSelected,
+                    svgSrc: 'assets/icons/coolShape.svg',
+                    title: 'Cool',
+                    press: _controller.updateCoolSelectedTab,
                   ),
                 ],
               );
