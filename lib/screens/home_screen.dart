@@ -44,6 +44,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   late List<Animation<double>> _tyreAnimations;
 
+  ///
+  /// バッテリーアニメーション設定
+  ///
   void setupBatteryAnimation() {
     _batteryAnimationController = AnimationController(
       vsync: this,
@@ -58,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _animationBattery = CurvedAnimation(
       parent: _batteryAnimationController,
       // 300msかけて終了
-      curve: Interval(0, 0.5),
+      curve: Interval(0.0, 0.5),
     );
 
     _animationBatteryStatus = CurvedAnimation(
@@ -69,25 +72,52 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  ///
+  /// 温度アニメーション設定
+  ///
+  void setupTempAnimation() {
+    _tempAnimationController = AnimationController(
+      vsync: this,
+      duration: Duration(
+        milliseconds: 1500,
+      ),
+    );
+
+    _animationCarShift = CurvedAnimation(
+      parent: _tempAnimationController,
+      // 最初ちょっと待ってから動く
+      curve: Interval(0.2, 0.4),
+    );
+  }
+
   @override
   void initState() {
     setupBatteryAnimation();
+    setupTempAnimation();
     super.initState();
   }
 
   @override
   void dispose() {
     _batteryAnimationController.dispose();
+    _tempAnimationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([_controller, _batteryAnimationController]),
+      // アニメーションリスナブル-アニメーション
+      // 多分このアニメーションコントローラーが更新されるたびにビルドされるようになっている
+      animation: Listenable.merge([
+        _controller,
+        _batteryAnimationController,
+        _tempAnimationController,
+      ]),
       builder: (context, _) {
-        print(_animationBattery.value);
+        // print(_animationBattery.value);
         // print(_animationBatteryStatus.value);
+        print(_animationCarShift.value);
         return Scaffold(
           bottomNavigationBar: TeslaBottomNavigationBar(
             onTap: (index) {
@@ -96,10 +126,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               else if (_controller.selectedBottomTab == 1 && index != 1)
                 _batteryAnimationController.reverse(from: 0.7);
 
-              // if (index == 2)
-              //   _tempAnimationController.forward();
-              // else if (_controller.selectedBottomTab == 2 && index != 2)
-              //   _tempAnimationController.reverse(from: 0.4);
+              if (index == 2)
+                _tempAnimationController.forward();
+              else if (_controller.selectedBottomTab == 2 && index != 2)
+                _tempAnimationController.reverse(from: 0.4);
 
               // if (index == 3)
               //   _tyreAnimationController.forward();
@@ -123,9 +153,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     height: constraints.maxHeight,
                     width: constraints.maxWidth,
                   ),
-
+                  // 車体
                   Positioned(
-                    left: constraints.maxWidth / 2,
+                    left: constraints.maxWidth / 2 * _animationCarShift.value,
                     height: constraints.maxHeight,
                     width: constraints.maxWidth,
                     child: Padding(
