@@ -3,10 +3,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:practice_animated_tesla_car/constanins.dart';
 import 'package:practice_animated_tesla_car/home_controller.dart';
+import 'package:practice_animated_tesla_car/models/tyre_psi.dart';
 import 'package:practice_animated_tesla_car/screens/components/battery_status.dart';
 import 'package:practice_animated_tesla_car/screens/components/door_lock.dart';
 import 'package:practice_animated_tesla_car/screens/components/temp_details.dart';
 import 'package:practice_animated_tesla_car/screens/components/tesla_bottom_navigationbar.dart';
+import 'package:practice_animated_tesla_car/screens/components/tyre_psi_card.dart';
 import 'package:practice_animated_tesla_car/screens/components/tyres.dart';
 // import 'package:practice_animated_tesla_car/models/TyrePsi.dart';
 
@@ -284,8 +286,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                   // Tyre
                   if (_controller.isShowTyre) ...tyres(constraints),
+                  // 空気圧表示グリッド
                   GridView.builder(
                     itemCount: 4,
+                    physics: NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: defaultPadding,
@@ -295,6 +299,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ),
                     itemBuilder: (context, index) => TyrePsiCard(
                       isBottomTwoTyre: index > 1,
+                      tyrePsi: demoPsiList[index],
                     ),
                   ),
                 ],
@@ -303,97 +308,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         );
       },
-    );
-  }
-}
-
-class TyrePsiCard extends StatelessWidget {
-  const TyrePsiCard({
-    Key? key,
-    required this.isBottomTwoTyre,
-  }) : super(key: key);
-  final bool isBottomTwoTyre;
-  // final TyrePsi tyrePsi;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(defaultPadding),
-      decoration: BoxDecoration(
-        color: Colors.white10,
-        border: Border.all(color: primaryColor, width: 2),
-        borderRadius: BorderRadius.all(
-          Radius.circular(6),
-        ),
-      ),
-      child: isBottomTwoTyre
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                lowPressureText(context),
-                Spacer(),
-                _psiText(context, psi: '23.6'),
-                const SizedBox(height: defaultPadding),
-                Text(
-                  '41\u2103',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _psiText(context, psi: '23.6'),
-                const SizedBox(height: defaultPadding),
-                Text(
-                  '41\u2103',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Spacer(),
-                lowPressureText(context),
-              ],
-            ),
-    );
-  }
-
-  ///
-  /// LOW表示
-  ///
-  Widget lowPressureText(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          'Low'.toUpperCase(),
-          style: Theme.of(context).textTheme.headline3!.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-        ),
-        Text(
-          'Pressure'.toUpperCase(),
-          style: TextStyle(fontSize: 20),
-        ),
-      ],
-    );
-  }
-
-  ///
-  /// psi表示
-  ///
-  Text _psiText(BuildContext context, {required String psi}) {
-    return Text.rich(
-      TextSpan(
-        text: psi,
-        style: Theme.of(context).textTheme.headline4!.copyWith(
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-        children: [
-          TextSpan(
-            text: 'psi',
-            style: TextStyle(fontSize: 24),
-          )
-        ],
-      ),
     );
   }
 }
