@@ -10,15 +10,6 @@ import 'package:practice_animated_tesla_car/screens/components/temp_details.dart
 import 'package:practice_animated_tesla_car/screens/components/tesla_bottom_navigationbar.dart';
 import 'package:practice_animated_tesla_car/screens/components/tyre_psi_card.dart';
 import 'package:practice_animated_tesla_car/screens/components/tyres.dart';
-// import 'package:practice_animated_tesla_car/models/TyrePsi.dart';
-
-// import 'components/battery_status.dart';
-// import 'components/door_lock.dart';
-// import 'components/temp_details.dart';
-// import 'components/tesla_bottom_navigationbar.dart';
-// import 'components/tmp_btn.dart';
-// import 'components/tyre_psi_card.dart';
-// import 'components/tyres.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -104,10 +95,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  ///
+  ///
+  ///
+  void setupTyreAnimation() {
+    _tyreAnimationController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1200));
+
+    /// tyreStatusControllerのFuture.Delayedの処理より、
+    /// 400ms遅れるのでそれに合わせる
+    /// 120 * 0.34 = 408
+    _animationTyre1Psi = CurvedAnimation(
+        parent: _tyreAnimationController, curve: Interval(0.34, 0.5));
+    _animationTyre2Psi = CurvedAnimation(
+        parent: _tyreAnimationController, curve: Interval(0.5, 0.66));
+    _animationTyre3Psi = CurvedAnimation(
+        parent: _tyreAnimationController, curve: Interval(0.66, 0.82));
+    _animationTyre4Psi = CurvedAnimation(
+        parent: _tyreAnimationController, curve: Interval(0.82, 1));
+    _tyreAnimations = [
+      _animationTyre1Psi,
+      _animationTyre2Psi,
+      _animationTyre3Psi,
+      _animationTyre4Psi,
+    ];
+  }
+
   @override
   void initState() {
     setupBatteryAnimation();
     setupTempAnimation();
+    setupTyreAnimation();
+
     super.initState();
   }
 
@@ -115,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void dispose() {
     _batteryAnimationController.dispose();
     _tempAnimationController.dispose();
+    _tyreAnimationController.dispose();
     super.dispose();
   }
 
@@ -126,6 +146,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       animation: Listenable.merge([
         _controller,
         _batteryAnimationController,
+        _tempAnimationController,
         _tempAnimationController,
       ]),
       builder: (context, _) {
@@ -145,10 +166,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               else if (_controller.selectedBottomTab == 2 && index != 2)
                 _tempAnimationController.reverse(from: 0.4);
 
-              // if (index == 3)
-              //   _tyreAnimationController.forward();
-              // else if (_controller.selectedBottomTab == 3 && index != 3)
-              //   _tyreAnimationController.reverse();
+              if (index == 3)
+                _tyreAnimationController.forward();
+              else if (_controller.selectedBottomTab == 3 && index != 3)
+                _tyreAnimationController.reverse();
 
               _controller.showTyreController(index);
               _controller.tyreStatusController(index);
@@ -213,8 +234,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   AnimatedPositioned(
                     duration: defaultDuration,
                     top: _controller.selectedBottomTab == 0
-                        ? constraints.maxWidth * 0.13
-                        : constraints.maxWidth / 2,
+                        ? constraints.maxHeight * 0.13
+                        : constraints.maxHeight / 2,
                     child: AnimatedOpacity(
                       duration: defaultDuration,
                       opacity: _controller.selectedBottomTab == 0 ? 1 : 0,
@@ -227,8 +248,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   AnimatedPositioned(
                     duration: defaultDuration,
                     bottom: _controller.selectedBottomTab == 0
-                        ? constraints.maxWidth * 0.17
-                        : constraints.maxWidth / 2,
+                        ? constraints.maxHeight * 0.17
+                        : constraints.maxHeight / 2,
                     child: AnimatedOpacity(
                       duration: defaultDuration,
                       opacity: _controller.selectedBottomTab == 0 ? 1 : 0,
@@ -242,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   Opacity(
                     opacity: _animationBattery.value,
                     child: SvgPicture.asset("assets/icons/Battery.svg",
-                        width: constraints.maxWidth * 0.4),
+                        width: constraints.maxWidth * 0.45),
                   ),
 
                   Positioned(
@@ -286,22 +307,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                   // Tyre
                   if (_controller.isShowTyre) ...tyres(constraints),
-                  // 空気圧表示グリッド
-                  GridView.builder(
-                    itemCount: 4,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: defaultPadding,
-                      crossAxisSpacing: defaultPadding,
-                      childAspectRatio:
-                          constraints.maxWidth / constraints.maxHeight,
+                  if (_controller.isShowTyreStatus)
+                    // 空気圧表示グリッド
+                    GridView.builder(
+                      itemCount: 4,
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: defaultPadding,
+                        crossAxisSpacing: defaultPadding,
+                        childAspectRatio:
+                            constraints.maxWidth / constraints.maxHeight,
+                      ),
+                      itemBuilder: (context, index) => ScaleTransition(
+                        scale: _tyreAnimations[index],
+                        child: TyrePsiCard(
+                          isBottomTwoTyre: index > 1,
+                          tyrePsi: demoPsiList[index],
+                        ),
+                      ),
                     ),
-                    itemBuilder: (context, index) => TyrePsiCard(
-                      isBottomTwoTyre: index > 1,
-                      tyrePsi: demoPsiList[index],
-                    ),
-                  ),
                 ],
               );
             }),
