@@ -90,6 +90,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       // 最初ちょっと待ってから動く
       curve: Interval(0.2, 0.4),
     );
+
+    _animationTempShowInfo = CurvedAnimation(
+      parent: _tempAnimationController,
+      curve: Interval(0.45, 0.65),
+    );
+
+    _animationCoolGlow = CurvedAnimation(
+      parent: _tempAnimationController,
+      curve: Interval(0.6, 1),
+    );
   }
 
   @override
@@ -245,7 +255,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ),
                   ),
                   // Temp
-                  TempDetails(controller: _controller),
+                  Positioned(
+                    height: constraints.maxHeight,
+                    width: constraints.maxWidth,
+                    top: 60 * (1 - _animationTempShowInfo.value),
+                    child: Opacity(
+                      opacity: _animationTempShowInfo.value,
+                      child: TempDetails(controller: _controller),
+                    ),
+                  ),
+                  Positioned(
+                    right: -180 * (1 - _animationCoolGlow.value),
+                    child: AnimatedSwitcher(
+                      duration: defaultDuration,
+                      child: _controller.isCoolSelected
+                          ? Image.asset(
+                              'assets/images/Cool_glow_2.png',
+                              key: UniqueKey(),
+                              width: 200,
+                            )
+                          : Image.asset(
+                              'assets/images/Hot_glow_4.png',
+                              key: UniqueKey(),
+                              width: 200,
+                            ),
+                    ),
+                  ),
                 ],
               );
             }),
